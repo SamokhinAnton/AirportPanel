@@ -13,38 +13,29 @@ namespace AirportPanel
         static void Main()
         {
             const string path = @"../../db.txt";
-            var information = new FlightInformation[0];
-            string[] fileFieldsName;
-            using (StreamReader sr = new StreamReader(path, Encoding.Default))
-            {
-                string line;
-                fileFieldsName = sr.ReadLine().Split('|');
-                while ((line = sr.ReadLine()) != null)
-                {
-                    if (!string.IsNullOrEmpty(line))
-                    {
-                        information = ParseInformation(information, line);
-                    }
-                }
-            }
-
+            var allLines = File.ReadAllLines(path, Encoding.Default).Where(l => !string.IsNullOrEmpty(l)).ToArray();
+            var fileFieldsName = allLines[0].Split('|');
+            var content = allLines.Where((l, i) => !string.IsNullOrEmpty(l) && i > 0).ToArray();
+            var information = ParseInformation(content);
+            
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("Select an action: Create, Delete, Edit, View, Search, Emergency: (c/e/d/v/s/em)");
             Console.ResetColor();
+
             var action = Console.ReadLine().ToLower();
             switch (action) 
             {
                 case "c":
-                    Create(path, information, fileFieldsName, information.LastOrDefault().Id);
+                    Create(path, fileFieldsName, content, information, information.LastOrDefault().Id);
                     Main();
                     break;
                 case "e":
                     Console.WriteLine("Enter the id of the record to edit");
-                    Edit(path, fileFieldsName, Console.ReadLine());
+                    Edit(path, fileFieldsName, content, information, Console.ReadLine());
                     break;
                 case "d":
                     Console.WriteLine("Enter the id of the record to remove");
-                    Delete(path, Console.ReadLine());
+                    Delete(path, content, fileFieldsName, Console.ReadLine());
                     break;
                 case "v":
                     View(information);
@@ -89,49 +80,55 @@ namespace AirportPanel
             public char Terminal;
         }
 
-        public static FlightInformation[] ParseInformation(FlightInformation[] information, string line)
+        public static FlightInformation[] ParseInformation(string[] lines)
         {
-            var temp = new FlightInformation[information.Length + 1];
-            Array.Copy(information, temp, information.Length);
-            var arrInformation = line.Split('|');
-            temp[temp.Length - 1] = new FlightInformation
+            var informations = new FlightInformation[lines.Length];
+            for (int i = 0; i < lines.Length; i++)
             {
-                Id = int.Parse(arrInformation[0]),
-                IsArrived = bool.Parse(arrInformation[1]),
-                Schedule = DateTime.Parse(arrInformation[2]),
-                FlightNumber = arrInformation[3],
-                CityPort = arrInformation[4],
-                Airline = arrInformation[5],
-                Gate = int.Parse(arrInformation[6]),
-                Status = (FlightStatus)(int.Parse(arrInformation[7])),
-                Terminal = char.Parse(arrInformation[8])     
+                var arrInformation = lines[i].Split('|');
+                informations[i] = new FlightInformation
+                {
+                    Id = int.Parse(arrInformation[0]),
+                    IsArrived = bool.Parse(arrInformation[1]),
+                    Schedule = DateTime.Parse(arrInformation[2]),
+                    FlightNumber = arrInformation[3],
+                    CityPort = arrInformation[4],
+                    Airline = arrInformation[5],
+                    Gate = int.Parse(arrInformation[6]),
+                    Status = (FlightStatus)(int.Parse(arrInformation[7])),
+                    Terminal = char.Parse(arrInformation[8])
+                };
             };
-            return temp;
+            return informations;
         }
 
-        public static void Create(string path, FlightInformation[] information, string[] fileFieldsName, int Last = 0)
+        public static void WriteLine(string path, string[] lines, string fileFieldsname)
         {
-            var fileText = "";
-            using (StreamReader sr = new StreamReader(path, Encoding.Default))
+            using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
             {
-                fileText = sr.ReadToEnd();
+                sw.WriteLine(fileFieldsname);
+                foreach (var line in lines)
+                {
+                    sw.WriteLine(line);
+                }
             }
-            
+        }
+        public static void Create(string path, string[] fileFieldsName, string[] content, FlightInformation[] information, int last = 0)
+        {            
             var temp = new string[fileFieldsName.Length];
-            temp[0] = (++Last).ToString();
+            temp[0] = (++last).ToString();
             for (int i = 1; i < fileFieldsName.Length; i++)
             {
                 Console.WriteLine("Enter {0}", fileFieldsName[i]);
                 temp[i] = Console.ReadLine();
             }
             var str = string.Join("|", temp);
-            try { 
-                information = ParseInformation(information, str);
-                using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
-                {
-                    sw.WriteLine(fileText);
-                    sw.WriteLine(str);
-                }
+            try {
+                temp = new string[content.Length + 1];
+                Array.Copy(content, temp, content.Length);
+                temp[temp.Length - 1] = str;
+                information = ParseInformation(temp);
+                WriteLine(path, temp, string.Join("|", fileFieldsName));
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
@@ -139,25 +136,10 @@ namespace AirportPanel
             }
         }
 
-        public static void Delete(string path, string id)
+        public static void Delete(string path, string[] content, string[] fileFieldsName, string id)
         {
-            string allLines = "";
-            using (StreamReader sr = new StreamReader(path, Encoding.Default))
-            {
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    if (!string.IsNullOrEmpty(line) && !string.Equals(line.Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
-                    {
-                        allLines += line + '\n';
-                    }
-                }
-            }
-            using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
-            {
-                sw.WriteLine(allLines);
-            }
-            Console.Clear();
+            var lines = content.Where(c => !string.Equals(c.Split('|')[0], id, StringComparison.OrdinalIgnoreCase)).ToArray();
+            WriteLine(path, lines, string.Join("|", fileFieldsName));
             Main();
         }
 
@@ -178,49 +160,78 @@ namespace AirportPanel
             Main();
         }
 
-        public static void Edit(string path, string[] fileFieldsName, string id)
+        public static void Edit(string path, string[] fileFieldsName, string[] content, FlightInformation[] information, string id)
         {
-            string allLines = "";
-            using (StreamReader sr = new StreamReader(path, Encoding.Default))
+            for(var i = 0; i < content.Length; i++)
             {
-                string line;
-                var testArrayInfo = new FlightInformation[0];
-                while ((line = sr.ReadLine()) != null)
+                if (!string.IsNullOrEmpty(content[i]) && string.Equals(content[i].Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!string.IsNullOrEmpty(line) && string.Equals(line.Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
+                    var editArray = content[i].Split('|');
+                    for (int j = 1; j < fileFieldsName.Length; j++)
                     {
-                        var editArray = line.Split('|');
-                        for (int i = 1; i < fileFieldsName.Length; i++)
+                        Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[j]);
+                        Console.WriteLine("current value: {0}", editArray[j]);
+                        var item = Console.ReadLine();
+                        if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
                         {
-                            Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[i]);
-                            Console.WriteLine("current value: {0}", editArray[i]);
-                            var item = Console.ReadLine();
-                            if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
-                            {
-                                continue;
-                            }
-                            editArray[i] = item;
+                            continue;
                         }
-                        try
-                        {
-                            var newline = string.Join("|", editArray);
-                            ParseInformation(testArrayInfo, newline);
-                            line = newline;
-                        } catch(Exception e)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("your data is not saved");
-                            Console.WriteLine(e.Message);
-                        }
+                        editArray[j] = item;
                     }
-                    allLines += line + '\n';
+                    content[i] = string.Join("|", editArray);
+                }
+                try
+                {
+                    information = ParseInformation(content);
+                    WriteLine(path, content, string.Join("|", fileFieldsName));
+                }
+                catch (Exception e)
+                {
+                    Console.Clear();
+                    Console.WriteLine("your data is not saved");
+                    Console.WriteLine(e.Message);
                 }
             }
-            using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
-            {
-                sw.WriteLine(allLines);
-            }
-            Main();
+            //using (StreamReader sr = new StreamReader(path, Encoding.Default))
+            //{
+            //    string line;
+            //    var testArrayInfo = new FlightInformation[0];
+            //    while ((line = sr.ReadLine()) != null)
+            //    {
+            //        if (!string.IsNullOrEmpty(line) && string.Equals(line.Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
+            //        {
+            //            var editArray = line.Split('|');
+            //            for (int i = 1; i < fileFieldsName.Length; i++)
+            //            {
+            //                Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[i]);
+            //                Console.WriteLine("current value: {0}", editArray[i]);
+            //                var item = Console.ReadLine();
+            //                if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
+            //                {
+            //                    continue;
+            //                }
+            //                editArray[i] = item;
+            //            }
+            //            try
+            //            {
+            //                var newline = string.Join("|", editArray);
+            //                //ParseInformation(testArrayInfo, newline);
+            //                line = newline;
+            //            } catch(Exception e)
+            //            {
+            //                Console.Clear();
+            //                Console.WriteLine("your data is not saved");
+            //                Console.WriteLine(e.Message);
+            //            }
+            //        }
+            //        allLines += line + '\n';
+            //    }
+            //}
+            //using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
+            //{
+            //    sw.WriteLine(allLines);
+            //}
+            //Main();
         }
 
         public static void Search(FlightInformation[] information)
@@ -239,7 +250,8 @@ namespace AirportPanel
                 case "t":
                     Console.WriteLine("type time");
                     search = Console.ReadLine();
-                    searchedInformation = information.Where(fn => fn.Schedule == DateTime.Parse(search)).ToArray();
+                    var parsedSearch = DateTime.Parse(search);
+                    searchedInformation = information.Where(fn => fn.Schedule == parsedSearch).ToArray();
                     View(searchedInformation);
                     break;
                 case "p":
@@ -254,7 +266,8 @@ namespace AirportPanel
                     Console.WriteLine("type port");
                     var port = Console.ReadLine();
                     Console.WriteLine("the nearest flight (1 hour)");
-                    searchedInformation = information.Where(fn => string.Equals(fn.CityPort, port, StringComparison.OrdinalIgnoreCase) && (fn.Schedule - DateTime.Parse(search)).Hours < 1).OrderBy(fn => fn.Schedule).ToArray();
+                    parsedSearch = DateTime.Parse(search);
+                    searchedInformation = information.Where(fn => string.Equals(fn.CityPort, port, StringComparison.OrdinalIgnoreCase) && (fn.Schedule - parsedSearch).TotalHours < 1).OrderBy(fn => fn.Schedule).ToArray();
                     View(searchedInformation);
                     break;
                 case "b":

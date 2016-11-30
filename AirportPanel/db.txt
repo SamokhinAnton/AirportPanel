@@ -6,4 +6,4 @@ Id|IsArrived(bool)|When(DateTime yyyy-MM-dd HH:mm)|FlightNumber(string)|City(str
 5|true|2016-02-03 09:30|GF 1245|Dushanbe|BRAVO|2|4|B
 6|false|2016-02-03 09:40|BN 4532|Dushanbe|FORA|2|5|B
 7|true|2016-04-12 10:00|LH 1493|Krakow|MAY|1|6|F
-10|true|2016-11-28 22:14|GH 9456|Kharkiv|TRUST|34|0|V
+10|false|2016-11-28 22:14|GH 9456|Kharkiv|TRUST|34|0|V
