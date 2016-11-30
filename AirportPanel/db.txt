@@ -1,10 +1,9 @@
-Id|IsArrived(bool)|When(DateTime yyyy-MM-dd HH:mm)|FlightNumber(string)|City(string)|Airline(string)|Gate(int)|Status(0-8)|Terminal(char)
+Id|IsArrived(bool)|When(DateTime yyyy-MM-dd HH:mm)|FlightNumber(string)|City(string)|Airline(string)|Gate(int)|Status(enum 0:CheckIn, 1:GateClosed, 2:Arrived, 3:DepartedAt, 4:Unknown, 5:Canceled, 6:ExpectedAt, 7:Delayed, 8:InFlight)|Terminal(char)
 1|true|2016-12-20 10:24|PS 5021|Hurgada|Lufthansa|5|0|D
 2|true|2016-12-15 05:30|QU 4431|Berne|BRAVO|4|1|D
 3|false|2017-01-02 15:00|7W 7057|Havana|DELTA|3|2|B
 4|false|2016-02-03 09:20|DL 9462|Dushanbe|UNITED|2|3|B
-5|true|2016-04-12 10:00|LH 1493|Krakow|MAY|1|6|F
-6|false|2016-12-12 12:12|wer 1234|wfw|wfewef|1|2|B
-8|true|2012-12-12 12:12|FG 2015|Praga|FONAR|23|6|D
-12|true|2015-12-11 11:11|fg-2015|Juno|TQWE|12|6|G
-
+5|true|2016-02-03 09:30|GF 1245|Dushanbe|BRAVO|2|4|B
+6|false|2016-02-03 09:40|BN 4532|Dushanbe|FORA|2|5|B
+7|true|2016-04-12 10:00|LH 1493|Krakow|MAY|1|6|F
+10|true|2016-11-28 22:14|GH 9456|Kharkiv|TRUST|34|0|V

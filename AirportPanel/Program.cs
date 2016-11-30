@@ -35,8 +35,7 @@ namespace AirportPanel
             switch (action) 
             {
                 case "c":
-                    var str = Create(path, fileFieldsName, information.LastOrDefault().Id);
-                    information = ParseInformation(information, str);
+                    Create(path, information, fileFieldsName, information.LastOrDefault().Id);
                     Main();
                     break;
                 case "e":
@@ -110,7 +109,7 @@ namespace AirportPanel
             return temp;
         }
 
-        public static string Create(string path, string[] fileFieldsName, int Last = 0)
+        public static void Create(string path, FlightInformation[] information, string[] fileFieldsName, int Last = 0)
         {
             var fileText = "";
             using (StreamReader sr = new StreamReader(path, Encoding.Default))
@@ -126,13 +125,18 @@ namespace AirportPanel
                 temp[i] = Console.ReadLine();
             }
             var str = string.Join("|", temp);
-            using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
+            try { 
+                information = ParseInformation(information, str);
+                using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
+                {
+                    sw.WriteLine(fileText);
+                    sw.WriteLine(str);
+                }
+            } catch(Exception e)
             {
-
-                sw.WriteLine(fileText);
-                sw.WriteLine(str);
+                Console.WriteLine(e.Message);
+                Main();
             }
-            return str;
         }
 
         public static void Delete(string path, string id)
@@ -163,12 +167,12 @@ namespace AirportPanel
             {
                 if (item.IsArrived)
                 {
-                    Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}",
-                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id);
+                    Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
                 } else
                 {
-                    Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}",
-                    item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id);
+                    Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+                    item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
                 }
             }
             Main();
@@ -180,6 +184,7 @@ namespace AirportPanel
             using (StreamReader sr = new StreamReader(path, Encoding.Default))
             {
                 string line;
+                var testArrayInfo = new FlightInformation[0];
                 while ((line = sr.ReadLine()) != null)
                 {
                     if (!string.IsNullOrEmpty(line) && string.Equals(line.Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
@@ -196,7 +201,17 @@ namespace AirportPanel
                             }
                             editArray[i] = item;
                         }
-                        line = string.Join("|", editArray);
+                        try
+                        {
+                            var newline = string.Join("|", editArray);
+                            ParseInformation(testArrayInfo, newline);
+                            line = newline;
+                        } catch(Exception e)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("your data is not saved");
+                            Console.WriteLine(e.Message);
+                        }
                     }
                     allLines += line + '\n';
                 }
@@ -205,7 +220,6 @@ namespace AirportPanel
             {
                 sw.WriteLine(allLines);
             }
-            Console.Clear();
             Main();
         }
 
