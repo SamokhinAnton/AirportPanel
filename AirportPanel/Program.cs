@@ -22,7 +22,7 @@ namespace AirportPanel
                 const string path = @"../../db.txt";
                 var allLines = File.ReadAllLines(path, Encoding.Default).Where(l => !string.IsNullOrEmpty(l)).ToArray();
                 var fileFieldsName = allLines[0].Split('|');
-                var content = allLines.Where((l, i) => !string.IsNullOrEmpty(l) && i > 0).ToArray();
+                var content = allLines.Where(l => !string.IsNullOrEmpty(l)).Skip(1).ToArray();
                 var information = ParseInformation(content);
 
                 var action = Console.ReadLine().ToLower();
@@ -106,11 +106,11 @@ namespace AirportPanel
             return informations;
         }
 
-        public static void WriteLine(string path, string[] lines, string fileFieldsname)
+        public static void WriteLines(string path, string[] lines, string fileFieldsName)
         {
             using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
             {
-                sw.WriteLine(fileFieldsname);
+                sw.WriteLine(fileFieldsName);
                 foreach (var line in lines)
                 {
                     sw.WriteLine(line);
@@ -132,7 +132,7 @@ namespace AirportPanel
                 Array.Copy(content, temp, content.Length);
                 temp[temp.Length - 1] = str;
                 information = ParseInformation(temp);
-                WriteLine(path, temp, string.Join("|", fileFieldsName));
+                WriteLines(path, temp, string.Join("|", fileFieldsName));
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
@@ -142,7 +142,7 @@ namespace AirportPanel
         public static void Delete(string path, string[] content, string[] fileFieldsName, string id)
         {
             var lines = content.Where(c => !string.Equals(c.Split('|')[0], id, StringComparison.OrdinalIgnoreCase)).ToArray();
-            WriteLine(path, lines, string.Join("|", fileFieldsName));
+            WriteLines(path, lines, string.Join("|", fileFieldsName));
         }
 
         public static void View(FlightInformation[] information)
@@ -184,7 +184,7 @@ namespace AirportPanel
                 try
                 {
                     information = ParseInformation(content);
-                    WriteLine(path, content, string.Join("|", fileFieldsName));
+                    WriteLines(path, content, string.Join("|", fileFieldsName));
                 }
                 catch (Exception e)
                 {
@@ -245,7 +245,6 @@ namespace AirportPanel
                 }
             }
         }
-
         public static void EmergencyMessage()
         {
             Console.ForegroundColor = ConsoleColor.Red;
