@@ -12,46 +12,50 @@ namespace AirportPanel
     {
         static void Main()
         {
-            const string path = @"../../db.txt";
-            var allLines = File.ReadAllLines(path, Encoding.Default).Where(l => !string.IsNullOrEmpty(l)).ToArray();
-            var fileFieldsName = allLines[0].Split('|');
-            var content = allLines.Where((l, i) => !string.IsNullOrEmpty(l) && i > 0).ToArray();
-            var information = ParseInformation(content);
             
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("Select an action: Create, Delete, Edit, View, Search, Emergency: (c/e/d/v/s/em)");
-            Console.ResetColor();
-
-            var action = Console.ReadLine().ToLower();
-            switch (action) 
+            bool check = true;
+            while (check)
             {
-                case "c":
-                    Create(path, fileFieldsName, content, information, information.LastOrDefault().Id);
-                    Main();
-                    break;
-                case "e":
-                    Console.WriteLine("Enter the id of the record to edit");
-                    Edit(path, fileFieldsName, content, information, Console.ReadLine());
-                    break;
-                case "d":
-                    Console.WriteLine("Enter the id of the record to remove");
-                    Delete(path, content, fileFieldsName, Console.ReadLine());
-                    break;
-                case "v":
-                    View(information);
-                    break;
-                case "s":
-                    Search(information);
-                    break;
-                case "em":
-                    EmergencyMessage();
-                    break;
-                default:
-                    Console.WriteLine("unknown identifier");
-                    Main();
-                    break;
-            }
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("Select an action: Create, Delete, Edit, View, Search, Emergency, Exit: (c/e/d/v/s/em/exit)");
+                Console.ResetColor();
+                const string path = @"../../db.txt";
+                var allLines = File.ReadAllLines(path, Encoding.Default).Where(l => !string.IsNullOrEmpty(l)).ToArray();
+                var fileFieldsName = allLines[0].Split('|');
+                var content = allLines.Where((l, i) => !string.IsNullOrEmpty(l) && i > 0).ToArray();
+                var information = ParseInformation(content);
 
+                var action = Console.ReadLine().ToLower();
+                switch (action) 
+                {
+                    case "c":
+                        Create(path, fileFieldsName, content, information, information.LastOrDefault().Id);
+                        break;
+                    case "e":
+                        Console.WriteLine("Enter the id of the record to edit");
+                        Edit(path, fileFieldsName, content, information, Console.ReadLine());
+                        break;
+                    case "d":
+                        Console.WriteLine("Enter the id of the record to remove");
+                        Delete(path, content, fileFieldsName, Console.ReadLine());
+                        break;
+                    case "v":
+                        View(information);
+                        break;
+                    case "s":
+                        Search(information);
+                        break;
+                    case "em":
+                        EmergencyMessage();
+                        break;
+                    case "exit":
+                        check = false;
+                        break;
+                    default:
+                        Console.WriteLine("unknown identifier");
+                        break;
+                }
+            }
         }
 
         public enum FlightStatus
@@ -132,7 +136,6 @@ namespace AirportPanel
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
-                Main();
             }
         }
 
@@ -140,7 +143,6 @@ namespace AirportPanel
         {
             var lines = content.Where(c => !string.Equals(c.Split('|')[0], id, StringComparison.OrdinalIgnoreCase)).ToArray();
             WriteLine(path, lines, string.Join("|", fileFieldsName));
-            Main();
         }
 
         public static void View(FlightInformation[] information)
@@ -157,7 +159,6 @@ namespace AirportPanel
                     item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
                 }
             }
-            Main();
         }
 
         public static void Edit(string path, string[] fileFieldsName, string[] content, FlightInformation[] information, string id)
@@ -192,91 +193,56 @@ namespace AirportPanel
                     Console.WriteLine(e.Message);
                 }
             }
-            //using (StreamReader sr = new StreamReader(path, Encoding.Default))
-            //{
-            //    string line;
-            //    var testArrayInfo = new FlightInformation[0];
-            //    while ((line = sr.ReadLine()) != null)
-            //    {
-            //        if (!string.IsNullOrEmpty(line) && string.Equals(line.Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
-            //        {
-            //            var editArray = line.Split('|');
-            //            for (int i = 1; i < fileFieldsName.Length; i++)
-            //            {
-            //                Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[i]);
-            //                Console.WriteLine("current value: {0}", editArray[i]);
-            //                var item = Console.ReadLine();
-            //                if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
-            //                {
-            //                    continue;
-            //                }
-            //                editArray[i] = item;
-            //            }
-            //            try
-            //            {
-            //                var newline = string.Join("|", editArray);
-            //                //ParseInformation(testArrayInfo, newline);
-            //                line = newline;
-            //            } catch(Exception e)
-            //            {
-            //                Console.Clear();
-            //                Console.WriteLine("your data is not saved");
-            //                Console.WriteLine(e.Message);
-            //            }
-            //        }
-            //        allLines += line + '\n';
-            //    }
-            //}
-            //using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
-            //{
-            //    sw.WriteLine(allLines);
-            //}
-            //Main();
         }
 
         public static void Search(FlightInformation[] information)
         {
-            Console.WriteLine("choose the type of search: Flight number, time, port, nearest or back to return to main menu: (fn/t/p/n/b)");
             FlightInformation[] searchedInformation;
             string search;
-            switch (Console.ReadLine())
+            bool check = true;
+            while (check)
             {
-                case "fn":
-                    Console.WriteLine("type Flight number");
-                    search = Console.ReadLine();
-                    searchedInformation = information.Where(fn => string.Equals(fn.FlightNumber, search, StringComparison.OrdinalIgnoreCase)).ToArray();
-                    View(searchedInformation);
-                    break;
-                case "t":
-                    Console.WriteLine("type time");
-                    search = Console.ReadLine();
-                    var parsedSearch = DateTime.Parse(search);
-                    searchedInformation = information.Where(fn => fn.Schedule == parsedSearch).ToArray();
-                    View(searchedInformation);
-                    break;
-                case "p":
-                    Console.WriteLine("type city/port");
-                    search = Console.ReadLine();
-                    searchedInformation = information.Where(fn => string.Equals(fn.CityPort, search, StringComparison.OrdinalIgnoreCase)).ToArray();
-                    View(searchedInformation);
-                    break;
-                case "n":
-                    Console.WriteLine("type dateTime");
-                    search = Console.ReadLine();
-                    Console.WriteLine("type port");
-                    var port = Console.ReadLine();
-                    Console.WriteLine("the nearest flight (1 hour)");
-                    parsedSearch = DateTime.Parse(search);
-                    searchedInformation = information.Where(fn => string.Equals(fn.CityPort, port, StringComparison.OrdinalIgnoreCase) && (fn.Schedule - parsedSearch).TotalHours < 1).OrderBy(fn => fn.Schedule).ToArray();
-                    View(searchedInformation);
-                    break;
-                case "b":
-                    Main();
-                    break;
-                default:
-                    Console.WriteLine("unknown identifier");
-                    Search(information);
-                    break;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("choose the type of search: Flight number, time, port, nearest or back to return to main menu: (fn/t/p/n/b)");
+                Console.ResetColor();
+                switch (Console.ReadLine())
+                {
+                    case "fn":
+                        Console.WriteLine("type Flight number");
+                        search = Console.ReadLine();
+                        searchedInformation = information.Where(fn => string.Equals(fn.FlightNumber, search, StringComparison.OrdinalIgnoreCase)).ToArray();
+                        View(searchedInformation);
+                        break;
+                    case "t":
+                        Console.WriteLine("type time");
+                        search = Console.ReadLine();
+                        var parsedSearch = DateTime.Parse(search);
+                        searchedInformation = information.Where(fn => fn.Schedule == parsedSearch).ToArray();
+                        View(searchedInformation);
+                        break;
+                    case "p":
+                        Console.WriteLine("type city/port");
+                        search = Console.ReadLine();
+                        searchedInformation = information.Where(fn => string.Equals(fn.CityPort, search, StringComparison.OrdinalIgnoreCase)).ToArray();
+                        View(searchedInformation);
+                        break;
+                    case "n":
+                        Console.WriteLine("type dateTime");
+                        search = Console.ReadLine();
+                        Console.WriteLine("type port");
+                        var port = Console.ReadLine();
+                        Console.WriteLine("the nearest flight (1 hour)");
+                        parsedSearch = DateTime.Parse(search);
+                        searchedInformation = information.Where(fn => string.Equals(fn.CityPort, port, StringComparison.OrdinalIgnoreCase) && (fn.Schedule - parsedSearch).TotalHours < 1).OrderBy(fn => fn.Schedule).ToArray();
+                        View(searchedInformation);
+                        break;
+                    case "b":
+                        check = false;
+                        break;
+                    default:
+                        Console.WriteLine("unknown identifier");
+                        break;
+                }
             }
         }
 
@@ -285,7 +251,6 @@ namespace AirportPanel
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("A blizzard warning has been issued for this area.  Please seek shelter immediately.");
             Console.ResetColor();
-            Main();
         }
     }
 }
