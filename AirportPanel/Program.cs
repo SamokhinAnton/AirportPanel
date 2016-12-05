@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AirportPanel.Models;
 
 namespace AirportPanel
 {
@@ -58,39 +59,39 @@ namespace AirportPanel
             }
         }
 
-        public enum FlightStatus
-        {
-            CheckIn,
-            GateClosed,
-            Arrived,
-            DepartedAt,
-            Unknown,
-            Canceled,
-            ExpectedAt,
-            Delayed,
-            InFlight
-        }
+        //public enum FlightStatus
+        //{
+        //    CheckIn,
+        //    GateClosed,
+        //    Arrived,
+        //    DepartedAt,
+        //    Unknown,
+        //    Canceled,
+        //    ExpectedAt,
+        //    Delayed,
+        //    InFlight
+        //}
 
-        public struct FlightInformation
-        {
-            public int Id;
-            public bool IsArrived;
-            public DateTime Schedule;
-            public string FlightNumber;
-            public string CityPort;
-            public string Airline;
-            public int Gate;
-            public FlightStatus Status;
-            public char Terminal;
-        }
+        //public struct FlightInformation
+        //{
+        //    public int Id;
+        //    public bool IsArrived;
+        //    public DateTime Schedule;
+        //    public string FlightNumber;
+        //    public string CityPort;
+        //    public string Airline;
+        //    public int Gate;
+        //    public FlightStatus Status;
+        //    public char Terminal;
+        //}
 
-        public static FlightInformation[] ParseInformation(string[] lines)
+        public static FlightModel[] ParseInformation(string[] lines)
         {
-            var informations = new FlightInformation[lines.Length];
+            var informations = new FlightModel[lines.Length];
             for (int i = 0; i < lines.Length; i++)
             {
                 var arrInformation = lines[i].Split('|');
-                informations[i] = new FlightInformation
+                informations[i] = new FlightModel
                 {
                     Id = int.Parse(arrInformation[0]),
                     IsArrived = bool.Parse(arrInformation[1]),
@@ -117,7 +118,7 @@ namespace AirportPanel
                 }
             }
         }
-        public static void Create(string path, string[] fileFieldsName, string[] content, FlightInformation[] information, int last = 0)
+        public static void Create(string path, string[] fileFieldsName, string[] content, FlightModel[] information, int last = 0)
         {            
             var temp = new string[fileFieldsName.Length];
             temp[0] = (++last).ToString();
@@ -145,7 +146,7 @@ namespace AirportPanel
             WriteLines(path, lines, string.Join("|", fileFieldsName));
         }
 
-        public static void View(FlightInformation[] information)
+        public static void View(FlightModel[] information)
         {
             foreach (var item in information)
             {
@@ -161,7 +162,7 @@ namespace AirportPanel
             }
         }
 
-        public static void Edit(string path, string[] fileFieldsName, string[] content, FlightInformation[] information, string id)
+        public static void Edit(string path, string[] fileFieldsName, string[] content, FlightModel[] information, string id)
         {
             for(var i = 0; i < content.Length; i++)
             {
@@ -195,9 +196,9 @@ namespace AirportPanel
             }
         }
 
-        public static void Search(FlightInformation[] information)
+        public static void Search(FlightModel[] information)
         {
-            FlightInformation[] searchedInformation;
+            FlightModel[] searchedInformation;
             string search;
             bool check = true;
             while (check)
