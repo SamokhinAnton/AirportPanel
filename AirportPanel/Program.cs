@@ -9,23 +9,29 @@ using AirportPanel.Models;
 
 namespace AirportPanel
 {
-    class Program
+    class Program : Base
     {
         static void Main()
         {
-            
             bool check = true;
             while (check)
             {
+                var flights = new Flight();
+                var flightsInformation = flights.GetFlights();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("Select an action: Create, Delete, Edit, View, Search, Emergency, Exit: (c/e/d/v/s/em/exit)");
                 Console.ResetColor();
-                const string path = @"../../db.txt";
-                var allLines = File.ReadAllLines(path, Encoding.Default).Where(l => !string.IsNullOrEmpty(l)).ToArray();
+                const string path = @"../../Data/flights.txt";
+                //var passenger = new Passenger(PassengerPath);
+
+
+                var allLines = FileHelper.ReadLines(path);
                 var fileFieldsName = allLines[0].Split('|');
                 var content = allLines.Where(l => !string.IsNullOrEmpty(l)).Skip(1).ToArray();
                 var information = ParseInformation(content);
 
+                
+                //var passengers = passenger.Parse(PassengerPath);
                 var action = Console.ReadLine().ToLower();
                 switch (action) 
                 {
@@ -41,7 +47,7 @@ namespace AirportPanel
                         Delete(path, content, fileFieldsName, Console.ReadLine());
                         break;
                     case "v":
-                        View(information);
+                        flights.View(flightsInformation);
                         break;
                     case "s":
                         Search(information);
@@ -58,32 +64,6 @@ namespace AirportPanel
                 }
             }
         }
-
-        //public enum FlightStatus
-        //{
-        //    CheckIn,
-        //    GateClosed,
-        //    Arrived,
-        //    DepartedAt,
-        //    Unknown,
-        //    Canceled,
-        //    ExpectedAt,
-        //    Delayed,
-        //    InFlight
-        //}
-
-        //public struct FlightInformation
-        //{
-        //    public int Id;
-        //    public bool IsArrived;
-        //    public DateTime Schedule;
-        //    public string FlightNumber;
-        //    public string CityPort;
-        //    public string Airline;
-        //    public int Gate;
-        //    public FlightStatus Status;
-        //    public char Terminal;
-        //}
 
         public static FlightModel[] ParseInformation(string[] lines)
         {
@@ -107,17 +87,7 @@ namespace AirportPanel
             return informations;
         }
 
-        public static void WriteLines(string path, string[] lines, string fileFieldsName)
-        {
-            using (StreamWriter sw = new StreamWriter(path, false, Encoding.Default))
-            {
-                sw.WriteLine(fileFieldsName);
-                foreach (var line in lines)
-                {
-                    sw.WriteLine(line);
-                }
-            }
-        }
+
         public static void Create(string path, string[] fileFieldsName, string[] content, FlightModel[] information, int last = 0)
         {            
             var temp = new string[fileFieldsName.Length];
@@ -133,7 +103,7 @@ namespace AirportPanel
                 Array.Copy(content, temp, content.Length);
                 temp[temp.Length - 1] = str;
                 information = ParseInformation(temp);
-                WriteLines(path, temp, string.Join("|", fileFieldsName));
+                FileHelper.WriteLines(path, temp, string.Join("|", fileFieldsName));
             } catch(Exception e)
             {
                 Console.WriteLine(e.Message);
@@ -143,24 +113,24 @@ namespace AirportPanel
         public static void Delete(string path, string[] content, string[] fileFieldsName, string id)
         {
             var lines = content.Where(c => !string.Equals(c.Split('|')[0], id, StringComparison.OrdinalIgnoreCase)).ToArray();
-            WriteLines(path, lines, string.Join("|", fileFieldsName));
+            FileHelper.WriteLines(path, lines, string.Join("|", fileFieldsName));
         }
 
-        public static void View(FlightModel[] information)
-        {
-            foreach (var item in information)
-            {
-                if (item.IsArrived)
-                {
-                    Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
-                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
-                } else
-                {
-                    Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
-                    item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
-                }
-            }
-        }
+        //public static void View(FlightModel[] information)
+        //{
+        //    foreach (var item in information)
+        //    {
+        //        if (item.IsArrived)
+        //        {
+        //            Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+        //                item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
+        //        } else
+        //        {
+        //            Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+        //            item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
+        //        }
+        //    }
+        //}
 
         public static void Edit(string path, string[] fileFieldsName, string[] content, FlightModel[] information, string id)
         {
@@ -185,7 +155,7 @@ namespace AirportPanel
                 try
                 {
                     information = ParseInformation(content);
-                    WriteLines(path, content, string.Join("|", fileFieldsName));
+                    FileHelper.WriteLines(path, content, string.Join("|", fileFieldsName));
                 }
                 catch (Exception e)
                 {
@@ -198,6 +168,7 @@ namespace AirportPanel
 
         public static void Search(FlightModel[] information)
         {
+            var flights = new Flight();
             FlightModel[] searchedInformation;
             string search;
             bool check = true;
@@ -212,20 +183,20 @@ namespace AirportPanel
                         Console.WriteLine("type Flight number");
                         search = Console.ReadLine();
                         searchedInformation = information.Where(fn => string.Equals(fn.FlightNumber, search, StringComparison.OrdinalIgnoreCase)).ToArray();
-                        View(searchedInformation);
+                        flights.View(searchedInformation);
                         break;
                     case "t":
                         Console.WriteLine("type time");
                         search = Console.ReadLine();
                         var parsedSearch = DateTime.Parse(search);
                         searchedInformation = information.Where(fn => fn.Schedule == parsedSearch).ToArray();
-                        View(searchedInformation);
+                        flights.View(searchedInformation);
                         break;
                     case "p":
                         Console.WriteLine("type city/port");
                         search = Console.ReadLine();
                         searchedInformation = information.Where(fn => string.Equals(fn.CityPort, search, StringComparison.OrdinalIgnoreCase)).ToArray();
-                        View(searchedInformation);
+                        flights.View(searchedInformation);
                         break;
                     case "n":
                         Console.WriteLine("type dateTime");
@@ -235,7 +206,7 @@ namespace AirportPanel
                         Console.WriteLine("the nearest flight (1 hour)");
                         parsedSearch = DateTime.Parse(search);
                         searchedInformation = information.Where(fn => string.Equals(fn.CityPort, port, StringComparison.OrdinalIgnoreCase) && (fn.Schedule - parsedSearch).TotalHours < 1).OrderBy(fn => fn.Schedule).ToArray();
-                        View(searchedInformation);
+                        flights.View(searchedInformation);
                         break;
                     case "b":
                         check = false;

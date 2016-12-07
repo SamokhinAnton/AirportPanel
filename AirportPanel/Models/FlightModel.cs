@@ -17,20 +17,6 @@ namespace AirportPanel.Models
         public int Gate { get; set; }
         public FlightStatus Status { get; set; }
         public char Terminal { get; set; }
-        public IEnumerable<PriceModel> Prices { get; set; }
-        public IEnumerable<PassengerModel> Passengers { get; set; }
-    }
-
-    public enum FlightStatus
-    {
-        CheckIn,
-        GateClosed,
-        Arrived,
-        DepartedAt,
-        Unknown,
-        Canceled,
-        ExpectedAt,
-        Delayed,
-        InFlight
+        //public PriceModel[] Prices { get; set; }
     }
 }

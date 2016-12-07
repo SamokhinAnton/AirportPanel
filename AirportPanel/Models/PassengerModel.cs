@@ -10,6 +10,7 @@ namespace AirportPanel.Models
     public class PassengerModel
     {
         public int Id { get; set; }
+
         public string FirstName { get; set; }
 
         public string SecondName { get; set; }
@@ -22,12 +23,10 @@ namespace AirportPanel.Models
 
         public Sex Sex { get; set; }
 
-        public FlightClass FlightClass { get; set; }
-    }
+        public int FlightId { get; set; }
 
-    public enum Sex
-    {
-        Male,
-        Female
+        public FlightModel Flight { get; set; }
+
+        public FlightClass FlightClass { get; set; }
     }
 }
