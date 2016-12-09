@@ -8,34 +8,44 @@ using System.Threading.Tasks;
 
 namespace AirportPanel
 {
-    class Flight : Base, IFlight<FlightModel>
+    class Flight
     {
-        private FlightModel[] _flights { get; set; }
-        public Flight()
+        public FlightModel[] Create(FlightModel[] flights)
         {
-            var lines = FileHelper.ReadLines(FlightsPath);
-            _flights = new FlightModel[lines.Length];
-            for (int i = 0; i < lines.Length; i++)
+            var newFlight = new FlightModel();
+            Console.WriteLine("Enter Arriving or Departing");
+            newFlight.IsArrived = bool.Parse(Console.ReadLine());
+            Console.WriteLine("Enter Date type(DateTime)");
+            newFlight.Schedule = DateTime.Parse(Console.ReadLine());
+            Console.WriteLine("Enter FlightNumber type(string)");
+            newFlight.FlightNumber = Console.ReadLine();
+            Console.WriteLine("Enter City type(string)");
+            newFlight.CityPort = Console.ReadLine();
+            Console.WriteLine("Enter Airline type(string)");
+            newFlight.Airline = Console.ReadLine();
+            Console.WriteLine("Enter Gate type(int)");
+            newFlight.Gate = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter Status 0:CheckIn, 1:GateClosed, 2:Arrived, 3:DepartedAt, 4:Unknown, 5:Canceled, 6:ExpectedAt, 7:Delayed, 8:InFlight type(enum)");
+            newFlight.Status = (FlightStatus)Enum.Parse(typeof(FlightStatus), Console.ReadLine());
+            Console.WriteLine("Enter Terminal type(char)");
+            newFlight.Terminal = char.Parse(Console.ReadLine());
+            newFlight.Tickets = new TicketModel[2];
+            for (int i = 0; i < 2; i++)
             {
-                var arrInformation = lines[i].Split('|');
-                _flights[i] = new FlightModel
+                Console.WriteLine("Type price for {0}", (FlightClass)i);
+                newFlight.Tickets[i] = new TicketModel
                 {
-                    Id = int.Parse(arrInformation[0]),
-                    IsArrived = bool.Parse(arrInformation[1]),
-                    Schedule = DateTime.Parse(arrInformation[2]),
-                    FlightNumber = arrInformation[3],
-                    CityPort = arrInformation[4],
-                    Airline = arrInformation[5],
-                    Gate = int.Parse(arrInformation[6]),
-                    Status = (FlightStatus)(int.Parse(arrInformation[7])),
-                    Terminal = char.Parse(arrInformation[8])
+                    FlightClass = (FlightClass)i,
+                    Price = decimal.Parse(Console.ReadLine()),
+                    Id = i
                 };
-            };
-        }
-
-        public FlightModel[] GetFlights()
-        {
-            return _flights;
+            }
+            newFlight.Id = (flights.OrderBy(f => f.Id).LastOrDefault()?.Id ?? 0) + 1;
+            newFlight.Passengers = new PassengerModel[0];
+            var tempArr = new FlightModel[flights.Length+1];
+            Array.Copy(flights, tempArr, flights.Length);
+            tempArr[tempArr.Length - 1] = newFlight;
+            return tempArr;
         }
 
         public void View(FlightModel[] information)
@@ -55,18 +65,11 @@ namespace AirportPanel
             }
         }
 
-        public FlightModel[] Parse(string path)
+        public FlightModel[] Delete(FlightModel[] flights)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Enter the id of the record to remove");
+            var id = int.Parse(Console.ReadLine());
+            return flights.Where(f => f.Id != id).ToArray();
         }
-
-        //public FlightModel[] CombineWithPrices(FlightModel[] flights, PriceModel[] prices)
-        //{
-        //    foreach (var flight in flights)
-        //    {
-        //        flight.Prices = prices.Where(p => p.FlightId == flight.Id).ToArray();
-        //    }
-        //    return flights;
-        //}
     }
 }

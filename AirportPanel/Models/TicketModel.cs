@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace AirportPanel.Models
 {
-    public class PriceModel
+    public class TicketModel
     {
         public int Id { get; set; } 
         public FlightClass FlightClass { get; set; }
-        public int FlightId { get; set; }
-        public FlightModel Flight { get; set; }
         public decimal Price { get; set; }
     }
 }

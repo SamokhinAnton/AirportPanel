@@ -1,8 +1,8 @@
-1|true|2016-12-20 10:24|PS 5021|Hurgada|Lufthansa|5|0|D
-2|true|2016-12-15 05:30|QU 4431|Berne|BRAVO|4|1|D
-3|false|2017-01-02 15:00|7W 7057|Havana|DELTA|3|2|B
-4|false|2016-02-03 09:20|DL 9462|Dushanbe|UNITED|2|3|B
-5|true|2016-02-03 09:30|GF 1245|Dushanbe|BRAVO|2|4|B
-6|false|2016-02-03 09:40|BN 4532|Dushanbe|FORA|2|5|B
-7|true|2016-04-12 10:00|LH 1493|Krakow|MAY|1|6|F
-10|true|2016-11-28 22:14|GH 2015|Kharkiv|TRUST|1|0|F
+1|true|2016-12-20 10:24|PS 5021|Hurgada|Lufthansa|5|0|D;1|0|10.5/2|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|1
+2|true|2016-12-15 05:30|QU 4431|Berne|BRAVO|4|1|D;3|0|10.5/4|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|3
+3|false|2017-01-02 15:00|7W 7057|Havana|DELTA|3|2|B;5|0|10.5/6|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|5
+4|false|2016-02-03 09:20|DL 9462|Dushanbe|UNITED|2|3|B;7|0|10.5/8|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|8
+5|true|2016-02-03 09:30|GF 1245|Dushanbe|BRAVO|2|4|B;9|0|10.5/10|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|9
+6|false|2016-02-03 09:40|BN 4532|Dushanbe|FORA|2|5|B;11|0|10.5/12|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|11
+7|true|2016-04-12 10:00|LH 1493|Krakow|MAY|1|6|F;13|0|10.5/14|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|13
+10|true|2016-11-28 22:14|GH 2015|Kharkiv|TRUST|1|0|F;15|0|10.5/16|1|15;1|Ivan|Ivanov|Ukrainian|GH201523|1990-05-11|0|1/2|Ivan1|Ivanov1|Ukrainian1|GH201524|1990-05-13|0|16

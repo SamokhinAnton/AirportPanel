@@ -51,8 +51,9 @@
     <Compile Include="Models\FlightModel.cs" />
     <Compile Include="Models\FlightStatus.cs" />
     <Compile Include="Models\PassengerModel.cs" />
-    <Compile Include="Models\PriceModel.cs" />
+    <Compile Include="Models\TicketModel.cs" />
     <Compile Include="Models\Sex.cs" />
+    <Compile Include="DataParser.cs" />
     <Compile Include="Passenger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

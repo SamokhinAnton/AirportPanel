@@ -17,6 +17,7 @@ namespace AirportPanel.Models
         public int Gate { get; set; }
         public FlightStatus Status { get; set; }
         public char Terminal { get; set; }
-        //public PriceModel[] Prices { get; set; }
+        public TicketModel[] Tickets { get; set; }
+        public PassengerModel[] Passengers { get; set; }
     }
 }

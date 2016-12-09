@@ -11,6 +11,7 @@ namespace AirportPanel
         protected const string PassengerPath = @"../../Data/passengers.txt";
         protected const string FlightsPath = @"../../Data/flights.txt";
         protected const string PricesPath = @"../../Data/prices.txt";
+        
 
     }
 }

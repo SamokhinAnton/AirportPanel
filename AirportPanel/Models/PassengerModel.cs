@@ -23,10 +23,6 @@ namespace AirportPanel.Models
 
         public Sex Sex { get; set; }
 
-        public int FlightId { get; set; }
-
-        public FlightModel Flight { get; set; }
-
-        public FlightClass FlightClass { get; set; }
+        public TicketModel Ticket { get; set; }
     }
 }

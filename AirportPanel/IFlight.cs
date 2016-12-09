@@ -9,7 +9,7 @@ namespace AirportPanel
     public interface IFlight<T> 
         where T : class
     {
-        T[] Parse(string path);
+        //void Parse();
 
     }
 }

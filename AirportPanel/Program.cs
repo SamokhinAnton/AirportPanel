@@ -13,44 +13,34 @@ namespace AirportPanel
     {
         static void Main()
         {
+            var data = new DataParser();
+            var flights = data.Flights;
             bool check = true;
             while (check)
             {
-                var flights = new Flight();
-                var flightsInformation = flights.GetFlights();
+                var flight = new Flight();
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Select an action: Create, Delete, Edit, View, Search, Emergency, Exit: (c/e/d/v/s/em/exit)");
+                Console.WriteLine("Select an action: Create flight, Create passenger, Delete flight, Delete passenger, Edit flight, Edit passenger, View flights, view passengers, Search, Emergency, Save&Exit: (cf/cp/ef/ep/df/dp/v/s/em/s&e)");
                 Console.ResetColor();
-                const string path = @"../../Data/flights.txt";
-                //var passenger = new Passenger(PassengerPath);
-
-
-                var allLines = FileHelper.ReadLines(path);
-                var fileFieldsName = allLines[0].Split('|');
-                var content = allLines.Where(l => !string.IsNullOrEmpty(l)).Skip(1).ToArray();
-                var information = ParseInformation(content);
-
                 
-                //var passengers = passenger.Parse(PassengerPath);
                 var action = Console.ReadLine().ToLower();
                 switch (action) 
                 {
-                    case "c":
-                        Create(path, fileFieldsName, content, information, information.LastOrDefault().Id);
+                    case "cf":
+                        flights = flight.Create(flights);
                         break;
                     case "e":
                         Console.WriteLine("Enter the id of the record to edit");
-                        Edit(path, fileFieldsName, content, information, Console.ReadLine());
+                        //Edit(path, fileFieldsName, content, information, Console.ReadLine());
                         break;
                     case "d":
-                        Console.WriteLine("Enter the id of the record to remove");
-                        Delete(path, content, fileFieldsName, Console.ReadLine());
+                        flights = flight.Delete(flights);
                         break;
                     case "v":
-                        flights.View(flightsInformation);
+                        flight.View(flights);
                         break;
                     case "s":
-                        Search(information);
+                        //Search(information);
                         break;
                     case "em":
                         EmergencyMessage();
@@ -65,27 +55,27 @@ namespace AirportPanel
             }
         }
 
-        public static FlightModel[] ParseInformation(string[] lines)
-        {
-            var informations = new FlightModel[lines.Length];
-            for (int i = 0; i < lines.Length; i++)
-            {
-                var arrInformation = lines[i].Split('|');
-                informations[i] = new FlightModel
-                {
-                    Id = int.Parse(arrInformation[0]),
-                    IsArrived = bool.Parse(arrInformation[1]),
-                    Schedule = DateTime.Parse(arrInformation[2]),
-                    FlightNumber = arrInformation[3],
-                    CityPort = arrInformation[4],
-                    Airline = arrInformation[5],
-                    Gate = int.Parse(arrInformation[6]),
-                    Status = (FlightStatus)(int.Parse(arrInformation[7])),
-                    Terminal = char.Parse(arrInformation[8])
-                };
-            };
-            return informations;
-        }
+        //public static FlightModel[] ParseInformation(string[] lines)
+        //{
+        //    var informations = new FlightModel[lines.Length];
+        //    for (int i = 0; i < lines.Length; i++)
+        //    {
+        //        var arrInformation = lines[i].Split('|');
+        //        informations[i] = new FlightModel
+        //        {
+        //            Id = int.Parse(arrInformation[0]),
+        //            IsArrived = bool.Parse(arrInformation[1]),
+        //            Schedule = DateTime.Parse(arrInformation[2]),
+        //            FlightNumber = arrInformation[3],
+        //            CityPort = arrInformation[4],
+        //            Airline = arrInformation[5],
+        //            Gate = int.Parse(arrInformation[6]),
+        //            Status = (FlightStatus)(int.Parse(arrInformation[7])),
+        //            Terminal = char.Parse(arrInformation[8])
+        //        };
+        //    };
+        //    return informations;
+        //}
 
 
         public static void Create(string path, string[] fileFieldsName, string[] content, FlightModel[] information, int last = 0)
@@ -102,7 +92,7 @@ namespace AirportPanel
                 temp = new string[content.Length + 1];
                 Array.Copy(content, temp, content.Length);
                 temp[temp.Length - 1] = str;
-                information = ParseInformation(temp);
+                //information = ParseInformation(temp);
                 FileHelper.WriteLines(path, temp, string.Join("|", fileFieldsName));
             } catch(Exception e)
             {
@@ -154,7 +144,7 @@ namespace AirportPanel
                 }
                 try
                 {
-                    information = ParseInformation(content);
+                    //information = ParseInformation(content);
                     FileHelper.WriteLines(path, content, string.Join("|", fileFieldsName));
                 }
                 catch (Exception e)
