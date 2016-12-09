@@ -15,6 +15,7 @@ namespace AirportPanel
         {
             Parser();
         }
+
         public void Parser()
         {
             var lines = FileHelper.ReadLines(FlightsPath);

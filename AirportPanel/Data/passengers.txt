@@ -1,6 +1,0 @@
-
-
-
-3|Ivan2|Ivanov2|Ukrainian2|GH201525|1990-05-12|0|1|1
-4|Ivan3|Ivanov3|Ukrainian3|GH201526|1990-05-14|0|2|1
-5|Ivan4|Ivanov4|Ukrainian4|GH201527|1990-05-15|0|2|1

@@ -20,7 +20,7 @@ namespace AirportPanel
             {
                 var flight = new Flight();
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("Select an action: Create flight, Create passenger, Delete flight, Delete passenger, Edit flight, Edit passenger, View flights, view passengers, Search, Emergency, Save&Exit: (cf/cp/ef/ep/df/dp/v/s/em/s&e)");
+                Console.WriteLine("Select an action: Create flight, Create passenger, Delete flight, Delete passenger, Edit flight, Edit passenger, View flights, View prices, view passengers, Search, Emergency, Save&Exit: (cf/cp/ef/ep/df/dp/v/s/em/s&e)");
                 Console.ResetColor();
                 
                 var action = Console.ReadLine().ToLower();
@@ -30,14 +30,19 @@ namespace AirportPanel
                         flights = flight.Create(flights);
                         break;
                     case "e":
-                        Console.WriteLine("Enter the id of the record to edit");
-                        //Edit(path, fileFieldsName, content, information, Console.ReadLine());
+                        flight.Edit(flights);
                         break;
                     case "d":
                         flights = flight.Delete(flights);
                         break;
                     case "v":
                         flight.View(flights);
+                        break;
+                    case "vpr":
+                        flight.ViewPriceList(flights);
+                        break;
+                    case "vpass":
+                        flight.ViewPriceList(flights);
                         break;
                     case "s":
                         //Search(information);
