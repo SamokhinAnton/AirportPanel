@@ -36,8 +36,14 @@ namespace AirportPanel
                     case "e":
                         flight.Edit(flights);
                         break;
+                    case "ep":
+                        passenger.Edit(flights);
+                        break;
                     case "d":
                         flights = flight.Delete(flights);
+                        break;
+                    case "dpass":
+                        flights = passenger.Delete(flights);
                         break;
                     case "v":
                         flight.View(flights);
@@ -131,39 +137,39 @@ namespace AirportPanel
         //    }
         //}
 
-        public static void Edit(string path, string[] fileFieldsName, string[] content, FlightModel[] information, string id)
-        {
-            for(var i = 0; i < content.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(content[i]) && string.Equals(content[i].Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
-                {
-                    var editArray = content[i].Split('|');
-                    for (int j = 1; j < fileFieldsName.Length; j++)
-                    {
-                        Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[j]);
-                        Console.WriteLine("current value: {0}", editArray[j]);
-                        var item = Console.ReadLine();
-                        if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-                        editArray[j] = item;
-                    }
-                    content[i] = string.Join("|", editArray);
-                }
-                try
-                {
-                    //information = ParseInformation(content);
-                    FileHelper.WriteLines(path, content, string.Join("|", fileFieldsName));
-                }
-                catch (Exception e)
-                {
-                    Console.Clear();
-                    Console.WriteLine("your data is not saved");
-                    Console.WriteLine(e.Message);
-                }
-            }
-        }
+        //public static void Edit(string path, string[] fileFieldsName, string[] content, FlightModel[] information, string id)
+        //{
+        //    for(var i = 0; i < content.Length; i++)
+        //    {
+        //        if (!string.IsNullOrEmpty(content[i]) && string.Equals(content[i].Split('|')[0], id, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            var editArray = content[i].Split('|');
+        //            for (int j = 1; j < fileFieldsName.Length; j++)
+        //            {
+        //                Console.WriteLine("Enter {0} to change or write 'l' to leave the value", fileFieldsName[j]);
+        //                Console.WriteLine("current value: {0}", editArray[j]);
+        //                var item = Console.ReadLine();
+        //                if (string.Equals(item, "l", StringComparison.OrdinalIgnoreCase))
+        //                {
+        //                    continue;
+        //                }
+        //                editArray[j] = item;
+        //            }
+        //            content[i] = string.Join("|", editArray);
+        //        }
+        //        try
+        //        {
+        //            //information = ParseInformation(content);
+        //            FileHelper.WriteLines(path, content, string.Join("|", fileFieldsName));
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.Clear();
+        //            Console.WriteLine("your data is not saved");
+        //            Console.WriteLine(e.Message);
+        //        }
+        //    }
+        //}
 
         public static void Search(FlightModel[] information)
         {

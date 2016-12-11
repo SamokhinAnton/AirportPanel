@@ -9,7 +9,11 @@ namespace AirportPanel
     public interface IFlight<T> 
         where T : class
     {
-        //void Parse();
+        T[] Create(T[] flights);
+        void View(T[] flights);
+
+        T[] Delete(T[] flights);
+        void Edit(T[] flights);
 
     }
 }

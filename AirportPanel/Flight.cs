@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AirportPanel
 {
-    class Flight
+    class Flight : IFlight<FlightModel>
     {
         public FlightModel[] Create(FlightModel[] flights)
         {

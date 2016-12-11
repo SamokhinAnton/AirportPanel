@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AirportPanel
 {
-    class Passenger
+    class Passenger : IFlight<FlightModel>
     {
         public FlightModel[] Create(FlightModel[] flights)
         {
@@ -51,9 +51,39 @@ namespace AirportPanel
             Console.WriteLine("write flight number");
             var flightNumber = Console.ReadLine();
             var flight = flights.SingleOrDefault(f => string.Equals(f.FlightNumber,flightNumber, StringComparison.OrdinalIgnoreCase));
+            ViewPassenger(flight);
+        }
+
+        public void Edit(FlightModel[] flights)
+        {
+            Console.WriteLine("Write flight number");
+            var flightNumber = Console.ReadLine();
+            var flight = flights.SingleOrDefault(f => string.Equals(f.FlightNumber, flightNumber, StringComparison.OrdinalIgnoreCase));
+            ViewPassenger(flight);
+            Console.WriteLine("choose passenger Id");
+            var passengerId = int.Parse(Console.ReadLine());
+            var passenger = flight.Passengers.SingleOrDefault(p => p.Id == passengerId);
+            FillMainPassengerFields(passenger, flight.Tickets);
+
+        }
+
+        public FlightModel[] Delete(FlightModel[] flights)
+        {
+            Console.WriteLine("Selecet flight Id");
+            var flightNumber = Console.ReadLine();
+            var flight = flights.SingleOrDefault(f => string.Equals(f.FlightNumber, flightNumber, StringComparison.OrdinalIgnoreCase));
+            ViewPassenger(flight);
+            Console.WriteLine("choose passenger Id to delete");
+            var passengerId = int.Parse(Console.ReadLine());
+            flight.Passengers = flight.Passengers.Where(p => p.Id != passengerId).ToArray();
+            return flights;
+        }
+
+        public void ViewPassenger(FlightModel flight)
+        {
             foreach (var passenger in flight.Passengers)
             {
-                Console.WriteLine(" - Passenger: {0} {1}, ticket: {2}", passenger.FirstName, passenger.SecondName, passenger.Ticket.FlightClass);
+                Console.WriteLine(" - Passenger {3}: {0} {1}, ticket: {2}", passenger.FirstName, passenger.SecondName, passenger.Ticket.FlightClass, passenger.Id);
             }
         }
     }
