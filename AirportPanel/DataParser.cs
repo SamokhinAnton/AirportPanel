@@ -1,6 +1,7 @@
 ﻿using AirportPanel.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,7 @@ namespace AirportPanel
                 {
                     Id = int.Parse(price[0]),
                     FlightClass = (FlightClass)int.Parse(price[1]),
-                    Price = decimal.Parse(price[2])
+                    Price = decimal.Parse(price[2], CultureInfo.InvariantCulture)
                 };
             }
             return prices;
