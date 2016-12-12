@@ -8,7 +8,7 @@ namespace AirportPanel.Models
 {
     public enum FlightClass
     {
-        Business,
-        Economy
+        Economy,
+        Business
     }
 }

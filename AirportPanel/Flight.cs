@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AirportPanel
 {
-    class Flight : IFlight<FlightModel>
+    public class Flight : IFlight<FlightModel>
     {
         public FlightModel[] Create(FlightModel[] flights)
         {
@@ -64,19 +64,10 @@ namespace AirportPanel
             var status = Console.ReadLine().ToLower();
             if(string.Equals("a", status, StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var item in flights.Where(f => f.IsArrived))
-                {
-                    Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
-                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
-                }
+                ViewFlights(flights.Where(f => f.IsArrived).ToArray());
             } else if(string.Equals("d", status, StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var item in flights.Where(f => !f.IsArrived))
-                {
-
-                    Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
-                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
-                }
+                ViewFlights(flights.Where(f => !f.IsArrived).ToArray());
             }
             
         }
@@ -121,6 +112,23 @@ namespace AirportPanel
             flight.Status = (FlightStatus)Enum.Parse(typeof(FlightStatus), Console.ReadLine());
             Console.WriteLine("Enter Terminal type(char)/nCurrent value: {0}", flight.Terminal);
             flight.Terminal = char.Parse(Console.ReadLine());
+        }
+
+        public void ViewFlights(FlightModel[] information)
+        {
+            foreach (var item in information)
+            {
+                if (item.IsArrived)
+                {
+                    Console.WriteLine("{5}) Flight {0} arrived to {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+                        item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
+                }
+                else
+                {
+                    Console.WriteLine("{5}) Flight {0} departed from {1} airport {2} at {3}. The flight is operated by airlines {4}. Current status is {6}",
+                    item.FlightNumber, item.CityPort, item.Schedule.ToString("D", CultureInfo.InvariantCulture), item.Schedule.ToString("HH:mm"), item.Airline, item.Id, item.Status);
+                }
+            }
         }
     }
 }
